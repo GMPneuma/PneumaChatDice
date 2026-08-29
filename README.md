@@ -31,9 +31,9 @@ https://github.com/GMPneuma/PneumaChatDice/releases
 
 ## Compatibility
 
-Version 0.1.0 targets:
+Version 0.1.1 targets:
 
-- Foundry Virtual Tabletop 11
+- Foundry Virtual Tabletop 11-12
 - Cyberpunk RED - CORE v0.88.2
 
 The module uses the system's existing chat-card classes and replaces image paths only after a chat message renders.
