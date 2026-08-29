@@ -1,4 +1,4 @@
-"""Build the detailed D6 PNG set with genuine transparent backgrounds."""
+"""Build the detailed D6 WebP set with genuine transparent backgrounds."""
 
 from __future__ import annotations
 
@@ -8,10 +8,10 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageFilter
 
-from build_dice_svgs import actual_die_alpha
+from build_dice_svgs import actual_die_alpha, save_webp
 
 
-OUTPUT_SIZE = 850
+COMPOSE_SIZE = 850
 
 
 def largest_component(mask: np.ndarray) -> np.ndarray:
@@ -50,7 +50,7 @@ def largest_component(mask: np.ndarray) -> np.ndarray:
 def clean_die(source: Path) -> Image.Image:
     with Image.open(source) as source_image:
         cleaned = actual_die_alpha(source_image)
-    cleaned = cleaned.resize((OUTPUT_SIZE, OUTPUT_SIZE), Image.Resampling.LANCZOS)
+    cleaned = cleaned.resize((COMPOSE_SIZE, COMPOSE_SIZE), Image.Resampling.LANCZOS)
 
     # Lanczos can introduce extremely faint alpha ringing at the canvas edge.
     alpha = np.asarray(cleaned.getchannel("A")).copy()
@@ -74,8 +74,10 @@ def extract_green_glyph(source: Path) -> Image.Image:
     source_alpha = pixels[:, :, 3]
 
     # The center ROI excludes the green accent slits around the D10 perimeter.
+    # Express it proportionally because packaged D10 sources are now 256px.
     roi = np.zeros(red.shape, dtype=bool)
-    roi[145:670, 175:675] = True
+    height, width = red.shape
+    roi[round(height * 0.17):round(height * 0.79), round(width * 0.21):round(width * 0.79)] = True
     green_face = (
         roi
         & (source_alpha > 16)
@@ -93,15 +95,19 @@ def extract_green_glyph(source: Path) -> Image.Image:
     if len(xs) < 100:
         raise ValueError(f"Could not isolate the numeral in {source}")
 
-    left = max(0, int(xs.min()) - 26)
-    top = max(0, int(ys.min()) - 26)
-    right = min(rgba.width, int(xs.max()) + 27)
-    bottom = min(rgba.height, int(ys.max()) + 27)
+    margin = max(4, round(min(rgba.size) * 26 / 850))
+    left = max(0, int(xs.min()) - margin)
+    top = max(0, int(ys.min()) - margin)
+    right = min(rgba.width, int(xs.max()) + margin + 1)
+    bottom = min(rgba.height, int(ys.max()) + margin + 1)
 
     colored_mask = Image.fromarray((green_face * 255).astype(np.uint8), mode="L")
     # Expand around the colored face to retain the numeral's black outline and
     # beveled shadow, then lightly feather the cutout.
-    glyph_mask = colored_mask.filter(ImageFilter.MaxFilter(31)).filter(ImageFilter.GaussianBlur(0.8))
+    dilation = max(3, round(min(rgba.size) * 31 / 850))
+    if dilation % 2 == 0:
+        dilation += 1
+    glyph_mask = colored_mask.filter(ImageFilter.MaxFilter(dilation)).filter(ImageFilter.GaussianBlur(0.8))
     glyph_mask = Image.fromarray(
         np.minimum(np.asarray(glyph_mask), source_alpha).astype(np.uint8),
         mode="L",
@@ -124,20 +130,20 @@ def build_purple_set(base_source: Path, dice_root: Path) -> None:
     destination.mkdir(parents=True, exist_ok=True)
 
     for face in range(1, 7):
-        glyph_source = destination / f"d10_{face}.png"
+        glyph_source = destination / f"d10_{face}.webp"
         glyph = fit_glyph(extract_green_glyph(glyph_source))
         output = base.copy()
-        x = (OUTPUT_SIZE - glyph.width) // 2
+        x = (COMPOSE_SIZE - glyph.width) // 2
         y = 438 - glyph.height // 2
         output.alpha_composite(glyph, (x, y))
-        output.save(destination / f"d6_{face}.png", format="PNG", optimize=True)
+        save_webp(output, destination / f"d6_{face}.webp")
 
 
 def build_red_preem(source: Path, dice_root: Path) -> None:
     output = clean_die(source)
     destination = dice_root / "red-blue"
     destination.mkdir(parents=True, exist_ok=True)
-    output.save(destination / "d6_6_preem.png", format="PNG", optimize=True)
+    save_webp(output, destination / "d6_6_preem.webp")
 
 
 def main() -> None:

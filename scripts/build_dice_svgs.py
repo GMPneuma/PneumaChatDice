@@ -1,4 +1,4 @@
-"""Package the detailed D10 artwork as transparent PNGs."""
+"""Package the detailed D10 artwork as optimized transparent WebP assets."""
 
 from __future__ import annotations
 
@@ -10,6 +10,8 @@ from PIL import Image, ImageDraw, ImageFilter
 
 
 FACES = [*(str(value) for value in range(1, 11)), "skull", "flame"]
+OUTPUT_SIZE = 256
+WEBP_QUALITY = 90
 
 
 def convex_hull(points: list[tuple[int, int]]) -> list[tuple[int, int]]:
@@ -93,20 +95,31 @@ def actual_die_alpha(image: Image.Image) -> Image.Image:
 
 def package_face(source: Path, destination: Path, face_name: str) -> None:
     with Image.open(source) as source_image:
-        face = actual_die_alpha(source_image).resize((850, 850), Image.Resampling.LANCZOS)
-        face_alpha = face.getchannel("A")
-        face_alpha_draw = ImageDraw.Draw(face_alpha)
-        face_alpha_draw.rectangle((0, 0, face.width - 1, 1), fill=0)
-        face_alpha_draw.rectangle((0, face.height - 2, face.width - 1, face.height - 1), fill=0)
-        face_alpha_draw.rectangle((0, 0, 1, face.height - 1), fill=0)
-        face_alpha_draw.rectangle((face.width - 2, 0, face.width - 1, face.height - 1), fill=0)
-        face.putalpha(face_alpha)
+        face = actual_die_alpha(source_image)
 
         destination.mkdir(parents=True, exist_ok=True)
-        png_name = f"d10_{face_name}.png"
+        webp_name = f"d10_{face_name}.webp"
 
-        png_path = destination / png_name
-        face.save(png_path, format="PNG", optimize=True)
+        save_webp(face, destination / webp_name)
+
+
+def save_webp(image: Image.Image, destination: Path) -> None:
+    """Resize an RGBA master, hard-clear its border, and encode it for Foundry."""
+    output = image.convert("RGBA").resize((OUTPUT_SIZE, OUTPUT_SIZE), Image.Resampling.LANCZOS)
+    pixels = np.asarray(output).copy()
+    pixels[:2, :, :] = 0
+    pixels[-2:, :, :] = 0
+    pixels[:, :2, :] = 0
+    pixels[:, -2:, :] = 0
+    output = Image.fromarray(pixels, mode="RGBA")
+    output.save(
+        destination,
+        format="WEBP",
+        lossless=False,
+        quality=WEBP_QUALITY,
+        method=6,
+        exact=True,
+    )
 
 def package_set(
     source_root: Path,

@@ -31,7 +31,7 @@ https://github.com/GMPneuma/PneumaChatDice/releases
 
 ## Compatibility
 
-Version 0.2.5 targets:
+Version 0.2.6 targets:
 
 - Foundry Virtual Tabletop 11-12
 - Cyberpunk RED - CORE v0.88.2
@@ -40,10 +40,10 @@ The module uses the system's existing chat-card classes and replaces image paths
 
 ## Asset layout
 
-- `icons/dice/purple-green/` contains the standard D10 and D6 PNGs.
-- `icons/dice/red-blue/` contains the critical D10 PNGs and special PREEM D6 PNG.
+- `icons/dice/purple-green/` contains the standard D10 and D6 WebP assets.
+- `icons/dice/red-blue/` contains the critical D10 WebP assets and special PREEM D6 WebP.
 
-All dice artwork is stored directly as transparent 850×850 PNGs. The D6 artwork is designed and checked at the system's approximately 70-pixel chat size.
+All shipped dice artwork is stored as transparent 256×256 WebP at quality 90. The artwork is designed and checked at the system's approximately 70-pixel chat size.
 
 The asset builders are retained in `scripts/build_dice_svgs.py` and `scripts/build_d6_pngs.py` for reproducible development builds.
 
