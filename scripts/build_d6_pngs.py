@@ -12,6 +12,8 @@ from build_dice_svgs import actual_die_alpha, save_webp
 
 
 COMPOSE_SIZE = 850
+PREEM_SIZE_RATIO = (233 / 256, 214 / 256)
+PREEM_OFFSET_RATIO = (11 / 256, 24 / 256)
 
 
 def largest_component(mask: np.ndarray) -> np.ndarray:
@@ -141,9 +143,15 @@ def build_purple_set(base_source: Path, dice_root: Path) -> None:
 
 def build_red_preem(source: Path, dice_root: Path) -> None:
     output = clean_die(source)
+    # The PREEM source fills more of its canvas than the standard D6. Fit it
+    # to the same measured visible bounds so both render at equal chat size.
+    fitted_size = tuple(round(COMPOSE_SIZE * ratio) for ratio in PREEM_SIZE_RATIO)
+    fitted_offset = tuple(round(COMPOSE_SIZE * ratio) for ratio in PREEM_OFFSET_RATIO)
+    fitted = Image.new("RGBA", (COMPOSE_SIZE, COMPOSE_SIZE), (0, 0, 0, 0))
+    fitted.alpha_composite(output.resize(fitted_size, Image.Resampling.LANCZOS), fitted_offset)
     destination = dice_root / "red-blue"
     destination.mkdir(parents=True, exist_ok=True)
-    save_webp(output, destination / "d6_6_preem.webp")
+    save_webp(fitted, destination / "d6_6_preem.webp")
 
 
 def main() -> None:
