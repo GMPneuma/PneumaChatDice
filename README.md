@@ -31,7 +31,7 @@ https://github.com/GMPneuma/PneumaChatDice/releases
 
 ## Compatibility
 
-Version 0.2.6 targets:
+Version 0.8 targets:
 
 - Foundry Virtual Tabletop 11-12
 - Cyberpunk RED - CORE v0.88.2
