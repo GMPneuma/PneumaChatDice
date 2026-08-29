@@ -12,7 +12,7 @@ from build_dice_svgs import OUTPUT_SIZE, actual_die_alpha, save_webp
 
 
 COMPOSE_SIZE = 850
-D6_MARGIN = 6
+D6_MARGIN = 16
 D6_VISIBLE_SIZE = OUTPUT_SIZE - 2 * D6_MARGIN
 
 
