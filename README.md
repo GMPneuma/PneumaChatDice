@@ -1,29 +1,52 @@
 # Pneuma Chat Dice
 
-Pneuma Chat Dice is a Foundry Virtual Tabletop module for the Cyberpunk RED system. It replaces the system's standard chat-dice presentation with custom, high-contrast cyberpunk dice artwork.
-
-## Planned features
-
-- Replace dice displayed in Cyberpunk RED chat cards.
-- Provide numbered faces from 1 through 10.
-- Provide special skull and flame faces.
-- Include two visual themes:
-  - Red dice with blue accents
-  - Purple dice with green accents
-- Preserve the underlying roll results and system mechanics; only the chat presentation is changed.
-
-## Compatibility
-
-Compatibility targets will be documented after the module is tested against specific Foundry VTT and Cyberpunk RED system versions.
+Pneuma Chat Dice is a Foundry Virtual Tabletop module for **Cyberpunk RED - CORE**. It changes only the dice artwork displayed in chat cards; roll mechanics and results remain untouched.
 
 ## Installation
 
-The module is not yet released. Once a release is available, install it through Foundry VTT using the module manifest URL or download a release archive from this repository.
+Paste this manifest URL into Foundry VTT's **Install Module** dialog:
 
-## Development status
+```text
+https://github.com/GMPneuma/PneumaChatDice/releases/latest/download/module.json
+```
 
-This project is in initial development. The repository currently serves as the home for the module implementation and its custom dice assets.
+After installation, enable **Pneuma Chat Dice** in the Cyberpunk RED world.
+
+Releases and manual ZIP downloads are available from:
+
+```text
+https://github.com/GMPneuma/PneumaChatDice/releases
+```
+
+## Dice mapping
+
+| Cyberpunk RED chat die | Pneuma replacement |
+| --- | --- |
+| Standard D10, faces 1-10 | Purple with green accents |
+| Critical follow-up D10, faces 1-10 | Red with blue accents |
+| Critical success D10 | Red/blue flame |
+| Critical failure D10 | Red/blue skull |
+| Standard D6, faces 1-6 | Purple with green accents |
+| Critical-success D6 showing 6 | Red/blue PREEM 6 |
+
+## Compatibility
+
+Version 0.1.0 targets:
+
+- Foundry Virtual Tabletop 11
+- Cyberpunk RED - CORE v0.88.2
+
+The module uses the system's existing chat-card classes and replaces image paths only after a chat message renders.
+
+## Asset layout
+
+- `icons/dice/purple-green/` contains the standard D10 PNGs and D6 SVGs.
+- `icons/dice/red-blue/` contains the critical D10 PNGs and special PREEM D6 SVG.
+
+The D10 artwork is stored directly as transparent 850×850 PNGs. The D6 artwork is compact native SVG so it stays crisp at chat size.
+
+The asset builders are retained in `scripts/build_dice_svgs.py` and `scripts/build_d6_svgs.py` for reproducible development builds.
 
 ## License
 
-No license has been selected yet. All rights are reserved unless a license is added to this repository.
+No license has been selected. All rights are reserved.
