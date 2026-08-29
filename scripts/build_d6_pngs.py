@@ -8,12 +8,12 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageFilter
 
-from build_dice_svgs import actual_die_alpha, save_webp
+from build_dice_svgs import OUTPUT_SIZE, actual_die_alpha, save_webp
 
 
 COMPOSE_SIZE = 850
-PREEM_SIZE_RATIO = (233 / 256, 214 / 256)
-PREEM_OFFSET_RATIO = (11 / 256, 24 / 256)
+D6_MARGIN = 6
+D6_VISIBLE_SIZE = OUTPUT_SIZE - 2 * D6_MARGIN
 
 
 def largest_component(mask: np.ndarray) -> np.ndarray:
@@ -62,6 +62,24 @@ def clean_die(source: Path) -> Image.Image:
     alpha[:, -2:] = 0
     cleaned.putalpha(Image.fromarray(alpha, mode="L"))
     return cleaned
+
+
+def normalize_d6_canvas(image: Image.Image) -> Image.Image:
+    """Fit the visible die to a shared tight square so every D6 renders equally."""
+    rgba = image.convert("RGBA")
+    alpha = np.asarray(rgba.getchannel("A"))
+    ys, xs = np.nonzero(alpha >= 16)
+    if len(xs) < 100:
+        raise ValueError("Could not identify the visible D6 bounds")
+
+    bounds = (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1)
+    fitted = rgba.crop(bounds).resize(
+        (D6_VISIBLE_SIZE, D6_VISIBLE_SIZE),
+        Image.Resampling.LANCZOS,
+    )
+    canvas = Image.new("RGBA", (OUTPUT_SIZE, OUTPUT_SIZE), (0, 0, 0, 0))
+    canvas.alpha_composite(fitted, (D6_MARGIN, D6_MARGIN))
+    return canvas
 
 
 def extract_green_glyph(source: Path) -> Image.Image:
@@ -138,20 +156,14 @@ def build_purple_set(base_source: Path, dice_root: Path) -> None:
         x = (COMPOSE_SIZE - glyph.width) // 2
         y = 438 - glyph.height // 2
         output.alpha_composite(glyph, (x, y))
-        save_webp(output, destination / f"d6_{face}.webp")
+        save_webp(normalize_d6_canvas(output), destination / f"d6_{face}.webp")
 
 
 def build_red_preem(source: Path, dice_root: Path) -> None:
     output = clean_die(source)
-    # The PREEM source fills more of its canvas than the standard D6. Fit it
-    # to the same measured visible bounds so both render at equal chat size.
-    fitted_size = tuple(round(COMPOSE_SIZE * ratio) for ratio in PREEM_SIZE_RATIO)
-    fitted_offset = tuple(round(COMPOSE_SIZE * ratio) for ratio in PREEM_OFFSET_RATIO)
-    fitted = Image.new("RGBA", (COMPOSE_SIZE, COMPOSE_SIZE), (0, 0, 0, 0))
-    fitted.alpha_composite(output.resize(fitted_size, Image.Resampling.LANCZOS), fitted_offset)
     destination = dice_root / "red-blue"
     destination.mkdir(parents=True, exist_ok=True)
-    save_webp(fitted, destination / "d6_6_preem.webp")
+    save_webp(normalize_d6_canvas(output), destination / "d6_6_preem.webp")
 
 
 def main() -> None:
