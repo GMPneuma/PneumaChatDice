@@ -25,13 +25,13 @@ https://github.com/GMPneuma/PneumaChatDice/releases
 | Standard D10, faces 1-10 | Purple with green accents |
 | Critical follow-up D10, faces 1-10 | Red with blue accents |
 | Critical success D10 | Red/blue flame |
-| Critical failure D10 | Red/blue cracked skull |
+| Critical failure D10 | Color-matched cracked skull |
 | Standard D6, faces 1-6 | Purple with green accents |
 | Critical-success D6 showing 6 | Red/blue PREEM 6 |
 
 ## Compatibility
 
-Version 0.2.4 targets:
+Version 0.2.5 targets:
 
 - Foundry Virtual Tabletop 11-12
 - Cyberpunk RED - CORE v0.88.2
