@@ -27,11 +27,11 @@ https://github.com/GMPneuma/PneumaChatDice/releases
 | Critical success D10 | Red/blue flame |
 | Critical failure D10 | Color-matched cracked skull |
 | Damage D6, including a lone 6 | Purple with green accents |
-| Damage roll containing 2+ sixes | Every 6 becomes the red/blue PREEM 6; all other dice stay purple |
+| Damage roll containing 2+ sixes | Every 6 becomes the glowing purple/gold PREEM 6; all other dice stay purple/green |
 
 ## Compatibility
 
-Version 0.8.3 targets:
+Version 0.9.0 targets:
 
 - Foundry Virtual Tabletop 11-12
 - Cyberpunk RED - CORE v0.88.2
@@ -41,7 +41,7 @@ The module uses the system's existing chat-card classes and replaces image paths
 ## Asset layout
 
 - `icons/dice/purple-green/` contains the standard D10 and D6 WebP assets.
-- `icons/dice/red-blue/` contains the critical D10 WebP assets and special PREEM D6 WebP.
+- `icons/dice/red-blue/` contains the critical D10 WebP assets and the legacy-path purple/gold PREEM D6 WebP.
 
 All shipped dice artwork is stored as transparent 256×256 WebP at quality 90. The D6 artwork is normalized to identical 244×244 visible bounds with a 6-pixel canvas margin, then checked at the system's approximately 70-pixel chat size.
 
