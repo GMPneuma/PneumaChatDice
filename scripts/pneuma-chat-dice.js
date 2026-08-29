@@ -22,10 +22,10 @@ function replacementPath(source) {
 
   if (die === "d6" && face >= 1 && face <= 6) {
     if (stockColor === "red" && special === "preem" && face === 6) {
-      return `${MODULE_DICE_ROOT}red-blue/d6_6_preem.svg`;
+      return `${MODULE_DICE_ROOT}red-blue/d6_6_preem.png`;
     }
     if (stockColor === "black" && !special) {
-      return `${MODULE_DICE_ROOT}purple-green/d6_${face}.svg`;
+      return `${MODULE_DICE_ROOT}purple-green/d6_${face}.png`;
     }
   }
 
