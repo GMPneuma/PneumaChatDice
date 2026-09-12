@@ -1,0 +1,9 @@
+/* Cyberpunk RED CORE assigns d6-60 to rolls of one or two D6s but does not
+   define that size class. Raster replacements otherwise render at 256px. */
+.d6-dice-div img.d6-60 {
+  width: 3.75rem;
+  height: 3.75rem;
+  max-width: 3.75rem;
+  max-height: 3.75rem;
+  object-fit: contain;
+}

@@ -31,12 +31,13 @@ https://github.com/GMPneuma/PneumaChatDice/releases
 
 ## Compatibility
 
-Version 0.9.1 targets:
+Version 0.9.2 targets:
 
 - Foundry Virtual Tabletop 11-12
 - Cyberpunk RED - CORE v0.88.2
 
 The module uses the system's existing chat-card classes and replaces image paths only after a chat message renders.
+It also supplies the system's missing `d6-60` size rule so one- and two-D6 chat rolls remain constrained to 60×60 pixels.
 
 ## Asset layout
 
